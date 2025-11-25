@@ -1,0 +1,17 @@
+# Ignore the entire target directory, as we only need the final App.jar
+# (and we only copy that one file in the second stage)
+target/
+
+# Ignore local Maven artifacts and cached repositories
+.mvn/
+.m2/
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Ignore logs and temporary files
+*.log
+tmp/
