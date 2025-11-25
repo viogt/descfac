@@ -28,13 +28,6 @@ public class checkXML {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
 
-        // Optional: for pretty-printing the output
-        /*
-         * transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-         * transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
-         * "4");
-         */
-
         StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
         return writer.getBuffer().toString();

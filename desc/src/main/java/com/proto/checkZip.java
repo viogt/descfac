@@ -54,13 +54,12 @@ public class checkZip {
                     entries.put(entryName, content);
                 }
             }
-        } catch (Exception e) {
-            System.err.println("An error occurred: " + e.getMessage());
-        }
+        } catch (Exception e) { System.out.println(e.getMessage()); }
 
         //Path tempZipPath = Files.createTempFile("modified", ".xlsx");
      
         //try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(Data.tempZipPath))) {
+        if(hasProtection)
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ZipOutputStream zos = new ZipOutputStream(baos)) {
             for (Map.Entry<String, byte[]> entry : entries.entrySet()) {
@@ -74,7 +73,7 @@ public class checkZip {
                 zos.closeEntry();
             }
             App.zipBytes = baos.toByteArray();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
 
         // --- REPLACE ORIGINAL ARCHIVE
         //Files.move(tempZipPath, Paths.get("unlocked.xlsx").toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);

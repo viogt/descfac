@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
-import org.apache.commons.fileupload.RequestContext;
+//import org.apache.commons.fileupload.RequestContext;
 
 public class App {
 
@@ -87,8 +87,8 @@ public class App {
                     }
                 }
             }
-
             App.say(ex, checkZip.Rprt);
+            ex.close();
         });
         server.createContext("/download", ex -> {
             Headers responseHeaders = ex.getResponseHeaders();
@@ -100,6 +100,7 @@ public class App {
             try (OutputStream os = ex.getResponseBody()) {
                 os.write(App.zipBytes);
                 os.close();
+                ex.close();
             }
         });
 
@@ -109,14 +110,12 @@ public class App {
     }
 
     static void say(HttpExchange ex, String message) throws IOException {
-        System.out.println(message);
         byte[] resp = message.getBytes();
         ex.sendResponseHeaders(200, resp.length);
         OutputStream os = ex.getResponseBody();
         os.write(resp);
         os.close();
     }
-
     static void serve(HttpExchange ex, String file) throws IOException {
         InputStream is = App.class.getClassLoader().getResourceAsStream(file);
         if (is != null) {
@@ -124,6 +123,7 @@ public class App {
             is.transferTo(ex.getResponseBody());
             is.close();
             ex.getResponseBody().close();
+            ex.close();
         } else {
             System.out.println("Resource not found in classpath: " + file);
             ex.sendResponseHeaders(404, 0);
@@ -134,7 +134,7 @@ public class App {
     }
 }
 
-class HttpExchangeRequestContext implements RequestContext {
+/*class HttpExchangeRequestContext implements Request {
     private final HttpExchange exchange;
 
     public HttpExchangeRequestContext(HttpExchange exchange) {
@@ -160,4 +160,4 @@ class HttpExchangeRequestContext implements RequestContext {
     public InputStream getInputStream() throws IOException {
         return exchange.getRequestBody();
     }
-}
+}*/
