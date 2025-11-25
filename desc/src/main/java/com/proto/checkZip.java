@@ -10,13 +10,14 @@ public class checkZip {
     public static String[][] report;
     public static String Rprt;
     public static boolean hasProtection;
+    public static int perSheet = 5;
 
     private static void printReport() {
         if (!hasProtection) {
             Rprt = "<font color='blue'>This workbook is not protected.</font>";
             return;
         }
-        Rprt = "<table>";
+        Rprt = "<br><font color='blue'>UNLOCKED FILE:</font><table>";
         for (int i = 0; i < report.length; i++) {
             Rprt += String.format("<tr><td>%d</td><td>%s</td><td>%s</td><td>%s</td></tr>",
                     i + 1, report[i][0], report[i][1], report[i][2]);
@@ -78,6 +79,7 @@ public class checkZip {
         // --- REPLACE ORIGINAL ARCHIVE
         //Files.move(tempZipPath, Paths.get("unlocked.xlsx").toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
         //System.out.println("Saved: " + Paths.get("unlocked.xlsx").toAbsolutePath().toString());
+        SSE.broadcast("+ Process finished successfully.");
         printReport();
     }
 }

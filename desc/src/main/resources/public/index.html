@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,25 +33,23 @@
             font-size: 16px;
         }
 
-        .loader {
-            width: 18px;
-            height: 18px;
-            border: 5px solid #00f;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
+        #progress {
+            width: 100%;
+            height: 24px;
+            background: #ddd;
+            margin-top: 20px;
+            border-radius: 6px;
+            overflow: hidden;
         }
 
-        @keyframes rotation {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+        #bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to bottom, green, darkgreen);
+            transition: .2s;
+            color: #fff;
+            text-align: center;
+            font: normal 14px/24px Arial, sans-serif;
         }
 
         table {
@@ -83,19 +82,42 @@
     <div class="container">
         <h2>▲ Upload and Analyze</h2>
         <input type="file" id="fileInput" onchange="uploadFile()">
-        <p id="message"></p>
+        <div id="progress"><div id="bar"></div></div>
+        <div id="message"></div>
     </div>
     <script>
+        const log = document.getElementById("message");
+        const bar = document.getElementById("bar");
+
+const es = new EventSource("/events");
+let progress;
+
+es.onmessage = (event) => {
+    let percent;
+    console.log(event.data);
+    log.innerHTML += `<font color='gree'>✔</font> ${event.data.substr(event.data.indexOf(' ')+1)}<br>`;
+    if(event.data.charAt(0) == '0') return;
+    if(event.data.charAt(0) == '+') percent = '100%';
+    else percent = (progress += parseInt(event.data)) + '%';
+    bar.style.width = percent;
+    bar.textContent = percent;
+};
+
+es.onerror = () => {
+    log.textContent += "[Error / connection lost]\\n";
+};
+
         async function uploadFile() {
             const fileInput = document.getElementById("fileInput");
             const file = fileInput.files[0]; // Get the first selected file
-            const messageElement = document.getElementById("message");
+            const messageElement = log;
 
             /*if (!file || !file.name.endsWith(".xlsx")) {
               messageElement.innerHTML = "<font color='red'>Please select an .XLSX file.</font>";
               return;
             }*/
-            messageElement.innerHTML = "<span class='loader'></span> Processing...";
+            messageElement.innerHTML = "";
+            progress = 0;
 
             const formData = new FormData();
             formData.append("myFile", file);
@@ -106,7 +128,7 @@
                     body: formData,
                 });
 
-                if (response.ok) messageElement.innerHTML = await response.text();
+                if (response.ok) messageElement.innerHTML += await response.text();
                 else {
                     const errorText = await response.text();
                     messageElement.textContent = `Upload failed: ${response.status} - ${errorText}`;

@@ -34,7 +34,7 @@ public class App {
                 App.say(ex, "Use POST");
                 return;
             }
-
+            SSE.broadcast("8 Processing started.");
             String contentType = ex.getRequestHeaders().getFirst("Content-Type");
             if (contentType == null || !contentType.contains("multipart/form-data")) {
                 App.say(ex, "Expected multipart/form-data");
@@ -72,7 +72,7 @@ public class App {
                     int pos = part.indexOf("\r\n\r\n");
                     if (pos != -1) {
                         byte[] fileData = part.substring(pos + 4).getBytes("ISO-8859-1");
-
+                        SSE.broadcast("8 File uploaded.");
                         checkZip.replaceFileInArchive(new ByteArrayInputStream(fileData));
 
                         /*
@@ -102,6 +102,16 @@ public class App {
                 os.close();
                 ex.close();
             }
+        });
+        server.createContext("/events", ex -> {
+            Headers headers = ex.getResponseHeaders();
+            headers.set("Content-Type", "text/event-stream");
+            headers.set("Cache-Control", "no-cache");
+            headers.set("Connection", "keep-alive");
+            ex.sendResponseHeaders(200, 0);
+            OutputStream os = ex.getResponseBody();
+            SSE.addClient(os);
+            //SSE.broadcast("0 inceput");
         });
 
         server.setExecutor(null);
