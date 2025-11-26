@@ -42,14 +42,15 @@ public class checkXML {
     public static byte[] checkSheet(String xmlName, byte[] cnt) throws Exception {
         Document doc = parseXmlString(cnt);
         NodeList itemList = doc.getElementsByTagName("sheetProtection");
+        String nm = xmlName.substring(xmlName.lastIndexOf('/')+1);
         if (itemList.getLength() > 0) {
             inReport(xmlName, "<b>Protected</b>");
             System.out.println("> "+ xmlName +" SheetProtection found and removed.");
             removeNode(itemList.item(0));
             checkZip.hasProtection = true;
-            SSE.broadcast(checkZip.perSheet + " Sheet "+xmlName+" is <font color='#c00'>unlocked</font>.");
+            SSE.broadcast(checkZip.perSheet + " Sheet <u>"+nm+"</u> is <font color='#c00'>unlocked</font>.");
         }
-        else SSE.broadcast(checkZip.perSheet + " Sheet "+xmlName+" is not locked.");
+        else SSE.broadcast(checkZip.perSheet + " Sheet <u>"+nm+"</u> is not locked.");
         String modifiedXml = serializeXmlDocument(doc);
         return modifiedXml.getBytes("UTF-8");
     }
@@ -76,10 +77,10 @@ public class checkXML {
             if (el.hasAttribute("state")) {
                 el.removeAttribute("state");
                 checkZip.hasProtection = true;
-                SSE.broadcast(checkZip.perSheet + " Sheet "+el.getAttribute("name")+" is <font color='#c00'>unhidden</font>.");
+                SSE.broadcast(checkZip.perSheet + " Sheet <u>"+el.getAttribute("name")+"</u> is <font color='#c00'>unhidden</font>.");
                 System.out.println("> \"" + el.getAttribute("name") + "\" Hiddden Attribute removed.");
             }
-            else SSE.broadcast(checkZip.perSheet + " Sheet "+el.getAttribute("name")+" is not hidden.");
+            else SSE.broadcast(checkZip.perSheet + " Sheet <u>"+el.getAttribute("name")+"</u> is not hidden.");
         }
         String modifiedXml = serializeXmlDocument(doc);
         return modifiedXml.getBytes("UTF-8");

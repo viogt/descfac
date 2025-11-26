@@ -37,10 +37,10 @@ public class checkZip {
             while ((entry = zis.getNextEntry()) != null) {
 
                 String entryName = entry.getName();
-                if (entry.isDirectory()) {
+                /*if (entry.isDirectory()) {
                     entries.put(entryName, null);
                     continue;
-                }
+                }*/
 
                 byte[] content = zis.readAllBytes();
                 //String fullString = new String(content, StandardCharsets.UTF_8);
@@ -55,7 +55,7 @@ public class checkZip {
                     entries.put(entryName, content);
                 }
             }
-        } catch (Exception e) { System.out.println(e.getMessage()); }
+        } catch (Exception e) { e.printStackTrace(); }
 
         //Path tempZipPath = Files.createTempFile("modified", ".xlsx");
      
@@ -69,10 +69,10 @@ public class checkZip {
 
                 ZipEntry newEntry = new ZipEntry(entryName);
                 zos.putNextEntry(newEntry);
-                if (content != null)
-                    zos.write(content);
+                zos.write(content);
                 zos.closeEntry();
             }
+            zos.close();
             App.zipBytes = baos.toByteArray();
         } catch (Exception e) { e.printStackTrace(); }
 
