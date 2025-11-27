@@ -33,25 +33,14 @@
             font-size: 16px;
         }
 
-        #progress {
-            width: 100%;
-            height: 28px;
-            background: #ddd;
-            margin-top: 20px;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        #bar {
-            height: 100%;
-            width: 0;
-            background: linear-gradient(to bottom, #4a4, #262);
-            transition: .2s;
-            color: #fff;
-            text-align: center;
-            font: normal 14px/28px Arial, sans-serif;
-        }
-
+#progress {
+    width: 100%; height: 32px; background: #ddd;
+    margin: 20px 0; border-radius: 16px; overflow: hidden;
+}
+#bar {
+    height: 100%; width: 0; background: linear-gradient(to right,blue,green); transition: .2s;
+    color: #fff; text-align: center; font: normal 16px/32px Arial, sans-serif;
+}
         table {
             width: 100%;
             border-collapse: collapse;
@@ -75,6 +64,7 @@
         b[lilac] {
             background-color: #ff0;
         }
+.lft { margin: 0 0 8px 20%; text-align: left; }
     </style>
 </head>
 
@@ -92,18 +82,30 @@
 const es = new EventSource("/events");
 let progress;
 
+function out(s, clss = true) {
+    const el = document.createElement("div");
+    if(clss) el.className = "lft";
+    el.innerHTML = s;
+    log.appendChild(el);
+}
 es.onmessage = (event) => {
     let percent;
-    log.innerHTML += `<font color='gree'>✔</font> ${event.data.substr(event.data.indexOf(' ')+1)}<br>`;
+    //log.innerHTML += event.data.substr(event.data.indexOf(' ')+1) + "<br>";
     if(event.data.charAt(0) == '0') return;
     if(event.data.charAt(0) == '+') percent = '100%';
-    else percent = (progress += parseInt(event.data)) + '%';
+    else {
+        const n = parseInt(event.data);
+        if(Number.isNaN(n)) return;
+        percent = (progress += n) + '%';
+    }
+    out(event.data.substr(event.data.indexOf(' ')+1));
     bar.style.width = percent;
     bar.textContent = percent;
 };
 
 es.onerror = () => {
-    log.textContent += "[Error / connection lost]\\n";
+    //log.innerHTML += "<br><font color='red'>[Error / connection lost]</font>";
+    out("<br><font color='red'>[Error / connection lost]</font>");
 };
 
         async function uploadFile() {
@@ -128,7 +130,8 @@ es.onerror = () => {
                 });
 
                 if (response.ok) {
-                    messageElement.innerHTML += await response.text();
+                    out(await response.text(), false);
+                    //messageElement.innerHTML += await response.text();
                     window.scroll({top: document.body.scrollHeight, behavior: 'smooth' });
                 }
                 else {
