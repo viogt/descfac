@@ -14,14 +14,13 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 440px;
             margin: auto;
             padding: 24px;
             background-color: #fff;
-            box-shadow: 0 4px 8px #666;
+            box-shadow: 0 4px 8px #888;
             border-radius: 16px;
-            font: normal 16px Arial, sans-serif;
-            text-align: center;
+            font: normal 15px Arial, sans-serif;
         }
 
         h2 {
@@ -33,14 +32,33 @@
             font-size: 16px;
         }
 
-#progress {
-    width: 100%; height: 32px; background: #ddd;
-    margin: 20px 0; border-radius: 16px; overflow: hidden;
-}
-#bar {
-    height: 100%; width: 0; background: linear-gradient(to right,blue,green); transition: .2s;
-    color: #fff; text-align: center; font: normal 16px/32px Arial, sans-serif;
-}
+        ::file-selector-button {
+            border: none;
+            padding: 5px 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px #444;
+            background-color: #fff;
+        }
+
+        #progress {
+            width: 100%;
+            height: 32px;
+            box-shadow: inset 0 2px 8px #444;
+            margin: 20px 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        #bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to bottom, #8a8, #242);
+            transition: .2s;
+            color: #fff;
+            text-align: center;
+            font: normal 16px/32px Arial, sans-serif;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -64,49 +82,68 @@
         b[lilac] {
             background-color: #ff0;
         }
-.lft { margin: 0 0 8px 20%; text-align: left; }
+
+        .fadeIn {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                transform: scale(.3);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <h2>▲ Upload and Analyze</h2>
-        <input type="file" id="fileInput" onchange="uploadFile()">
-        <div id="progress"><div id="bar"></div></div>
+        <input type="file" id="fileInput" accept=".xlsx" onchange="uploadFile()">
+        <div id="progress">
+            <div id="bar"></div>
+        </div>
         <div id="message"></div>
+        <div id="rezultat"></div>
     </div>
     <script>
         const log = document.getElementById("message");
         const bar = document.getElementById("bar");
+        const rezultat = document.getElementById("rezultat");
 
-const es = new EventSource("/events");
-let progress;
+        const es = new EventSource("/events");
+        let progress;
 
-function out(s, clss = true) {
-    const el = document.createElement("div");
-    if(clss) el.className = "lft";
-    el.innerHTML = s;
-    log.appendChild(el);
-}
-es.onmessage = (event) => {
-    let percent;
-    //log.innerHTML += event.data.substr(event.data.indexOf(' ')+1) + "<br>";
-    if(event.data.charAt(0) == '0') return;
-    if(event.data.charAt(0) == '+') percent = '100%';
-    else {
-        const n = parseInt(event.data);
-        if(Number.isNaN(n)) return;
-        percent = (progress += n) + '%';
-    }
-    out(event.data.substr(event.data.indexOf(' ')+1));
-    bar.style.width = percent;
-    bar.textContent = percent;
-};
+        function out(s) {
+            const el = document.createElement("p");
+            el.innerHTML = s;
+            log.appendChild(el);
+            el.classList.add("fadeIn");
+        }
+        es.onmessage = (event) => {
+            let percent;
+            //log.innerHTML += event.data.substr(event.data.indexOf(' ')+1) + "<br>";
+            if (event.data.charAt(0) == '0') return;
+            if (event.data.charAt(0) == '+') percent = '100%';
+            else {
+                const n = parseInt(event.data);
+                if (Number.isNaN(n)) return;
+                percent = (progress += n) + '%';
+            }
+            out(event.data.substr(event.data.indexOf(' ') + 1));
+            bar.style.width = percent;
+            bar.textContent = percent;
+        };
 
-es.onerror = () => {
-    //log.innerHTML += "<br><font color='red'>[Error / connection lost]</font>";
-    out("<br><font color='red'>[Error / connection lost]</font>");
-};
+        es.onerror = () => {
+            //log.innerHTML += "<br><font color='red'>[Error / connection lost]</font>";
+            out("<br><font color='red'>[Error / connection lost]</font>");
+        };
 
         async function uploadFile() {
             const fileInput = document.getElementById("fileInput");
@@ -118,6 +155,7 @@ es.onerror = () => {
               return;
             }*/
             messageElement.innerHTML = "";
+            rezultat.innerHTML = "";
             progress = 0;
 
             const formData = new FormData();
@@ -130,16 +168,15 @@ es.onerror = () => {
                 });
 
                 if (response.ok) {
-                    out(await response.text(), false);
-                    //messageElement.innerHTML += await response.text();
-                    window.scroll({top: document.body.scrollHeight, behavior: 'smooth' });
+                    rezultat.innerHTML = await response.text();
+                    window.scroll({ top: document.body.scrollHeight, behavior: 'smooth' });
                 }
                 else {
                     const errorText = await response.text();
-                    messageElement.textContent = `Upload failed: ${response.status} - ${errorText}`;
+                    rezultat.textContent = "Upload failed:" + response.status + " - " + errorText;
                 }
             } catch (error) {
-                messageElement.textContent = `Network error: ${error.message}`;
+                rezultat.innerHTML = "<font color='red'>Network error:</font> " + error.message;
                 console.error("Fetch error:", error);
             }
         }
