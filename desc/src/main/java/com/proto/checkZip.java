@@ -14,7 +14,7 @@ public class checkZip {
 
     private static void printReport() {
         if (!hasProtection) {
-            Rprt = "<font color='#9e9'>This workbook is not protected.</font>";
+            Rprt = "<img src='/public/logo.png'/>&nbsp;<font color='#9e9'>This workbook is not protected.</font>";
             return;
         }
         Rprt = "<br><font color='#9e9'>UNLOCKED FILE:</font><table>";
@@ -22,7 +22,7 @@ public class checkZip {
             Rprt += String.format("<tr><td>%d</td><td>%s</td><td>%s</td><td>%s</td></tr>",
                     i + 1, report[i][0], report[i][1], report[i][2]);
         }
-        Rprt += "</table><br>▾<a style='color:#9e9' href='/download'>DOWNLOAD UNLOCKED</a>";
+        Rprt += "</table><br><img src='/public/logo.png'/>&nbsp;<a style='color:#9e9' href='/download'>DOWNLOAD UNLOCKED</a>";
     }
 
     public static void replaceFileInArchive(InputStream inputZipPath) throws IOException {

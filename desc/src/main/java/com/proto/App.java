@@ -27,6 +27,7 @@ public class App {
             serve(ex, "public/index.html");
         });
         server.createContext("/public", ex -> {
+            //System.out.println("Serving: " + ex.getRequestURI().getPath());
             serve(ex, ex.getRequestURI().getPath().substring(1));
         });
         server.createContext("/upload", ex -> {

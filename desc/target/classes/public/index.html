@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
     <!--<link rel="stylesheet" href="public/styles.css">
     <script src="public/script.js"></script>-->
-    <title>▲ Upload and Analyze</title>
+    <title>Upload and Analyze</title>
     <style>
         body {
             background-color: #222;
@@ -27,16 +28,17 @@
 
         h2 {
             font: bold 24px Arial, sans-serif;
-            color: #ccc;
+            color: #8a8;
         }
 
         input[type="file"] {
             font-size: 16px;
         }
+        img { width: 20px; height: 20px; }
 
         ::file-selector-button {
             border: none;
-            padding: 5px 10px;
+            padding: 5px 18px;
             border-radius: 10px;
             background: linear-gradient(to bottom, #464, #242);
             color: #ccc;
@@ -105,7 +107,7 @@
 
 <body>
     <div class="container">
-        <h2>▲ Upload .xlsx file</h2>
+        <h2><img src='/public/logo.png'/>&nbsp;Upload .xlsx file</h2>
         <input type="file" id="fileInput" accept=".xlsx" onchange="uploadFile()">
         <div id="progress">
             <div id="bar"></div>
