@@ -14,15 +14,15 @@ public class checkZip {
 
     private static void printReport() {
         if (!hasProtection) {
-            Rprt = "<font color='blue'>This workbook is not protected.</font>";
+            Rprt = "<font color='#9e9'>This workbook is not protected.</font>";
             return;
         }
-        Rprt = "<br><font color='blue'>UNLOCKED FILE:</font><table>";
+        Rprt = "<br><font color='#9e9'>UNLOCKED FILE:</font><table>";
         for (int i = 0; i < report.length; i++) {
             Rprt += String.format("<tr><td>%d</td><td>%s</td><td>%s</td><td>%s</td></tr>",
                     i + 1, report[i][0], report[i][1], report[i][2]);
         }
-        Rprt += "</table><br><a href='/download'>Download unlocked file</a>";
+        Rprt += "</table><br>▾<a style='color:#9e9' href='/download'>DOWNLOAD UNLOCKED</a>";
     }
 
     public static void replaceFileInArchive(InputStream inputZipPath) throws IOException {

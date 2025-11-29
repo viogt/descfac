@@ -20,7 +20,7 @@ public class SSE {
     }
 
     public static void broadcast(String message) {
-        String sseMessage = "data: " + message.replaceFirst(" "," <font color='green'>&#x2714;</font>&nbsp;") + "\n\n";
+        String sseMessage = "data: " + message.replaceFirst(" "," <font color='#9e9'>&#x2714;</font>&nbsp;") + "\n\n";
         byte[] data = sseMessage.getBytes(java.nio.charset.StandardCharsets.UTF_8);
 
         clients.forEach(out -> {

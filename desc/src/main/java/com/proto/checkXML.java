@@ -48,7 +48,7 @@ public class checkXML {
             System.out.println("> "+ xmlName +" SheetProtection found and removed.");
             removeNode(itemList.item(0));
             checkZip.hasProtection = true;
-            SSE.broadcast(checkZip.perSheet + " Sheet <u>"+nm+"</u> is <font color='#c00'>unlocked</font>.");
+            SSE.broadcast(checkZip.perSheet + " Sheet <u>"+nm+"</u> is <font color='#f50'>unlocked</font>.");
         }
         else SSE.broadcast(checkZip.perSheet + " Sheet <u>"+nm+"</u> is not locked.");
         String modifiedXml = serializeXmlDocument(doc);
@@ -62,7 +62,7 @@ public class checkXML {
             System.out.println("> WorkbookProtection found and removed.");
             checkZip.hasProtection = true;
             removeNode(itemList.item(0));
-            SSE.broadcast("8 Workbook protection <font color='#c00'>removed</font>.");
+            SSE.broadcast("8 Workbook protection <font color='#f50'>removed</font>.");
         }
         else SSE.broadcast("8 Workbook is not protected.");
         itemList = doc.getElementsByTagName("sheet");
@@ -77,7 +77,7 @@ public class checkXML {
             if (el.hasAttribute("state")) {
                 el.removeAttribute("state");
                 checkZip.hasProtection = true;
-                SSE.broadcast(checkZip.perSheet + " Sheet <u>"+el.getAttribute("name")+"</u> is <font color='#c00'>unhidden</font>.");
+                SSE.broadcast(checkZip.perSheet + " Sheet <u>"+el.getAttribute("name")+"</u> is <font color='#f50'>unhidden</font>.");
                 System.out.println("> \"" + el.getAttribute("name") + "\" Hiddden Attribute removed.");
             }
             else SSE.broadcast(checkZip.perSheet + " Sheet <u>"+el.getAttribute("name")+"</u> is not hidden.");
